@@ -31,7 +31,7 @@ class Tool(Plugin):
             ("tool_diam", "mm", 6.0, "Tool diameter"),
             ("stepover", "mm", 2.0, "Trochoidal step over"),
             ("radius", "mm", 3.0, "Trochoidal loop radius"),
-            ("feed", "mm/s", 300, "Feed rate in mm/s"),
+            ("feed", "mm/s", 20, "Feed rate in mm/s"),
             ("rpm", "int", 10000, "Spindle RPM"),
         ]
 
@@ -104,8 +104,8 @@ class Tool(Plugin):
 
                 while True :
 
-                    for i in range(segments + 1):
-                        angle = 1.5 * math.pi + 2 * math.pi * i / segments
+                    for i in range(segments - 1):
+                        angle = 1.5 * math.pi - 2 * math.pi * i / segments
                         cx = x + radius * math.cos(angle)
                         cy = y + radius * math.sin(angle)
                         block.append(f"G1 X{cx:.3f} Y{cy:.3f} F{feed}")
@@ -121,12 +121,12 @@ class Tool(Plugin):
                 if y == height:
                     break
                 cur_y = y
-                y += 1.8 * radius
+                y += 2 * radius + tool_diam - 2
                 if (y > height):
                     y = height
                 while True: 
                     for i in range(segments + 1):
-                        angle = 2 * math.pi * i / segments
+                        angle = -2 * math.pi * i / segments
                         cx = x + radius * math.cos(angle)
                         cy = cur_y + radius * math.sin(angle)
                         block.append(f"G1 X{cx:.3f} Y{cy:.3f} F{feed}")
